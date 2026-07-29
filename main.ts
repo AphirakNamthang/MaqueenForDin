@@ -405,13 +405,21 @@ namespace maqueenStep {
     /**
      * Set how many seconds Maqueen should turn before it starts searching for the next black line.
      */
-    //% blockId=maqueen_step_set_turn_search_delay_seconds
+    //% blockId=maqueen_step_set_turn_search_delay_seconds_v2
     //% block="ตั้งเวลาหน่วงก่อนหาเส้นตอนเลี้ยวเป็น %seconds วินาที"
     //% seconds.min=1 seconds.max=10 seconds.defl=1
     //% group="ตั้งค่า"
     //% weight=68
-    export function setTurnSearchDelaySeconds(seconds: number): void {
+    export function setTurnSearchDelaySecondValue(seconds: number): void {
         turnSearchDelayMs = Math.max(1, seconds) * 1000
+    }
+
+    /**
+     * Hidden compatibility block for the first second-based turn-search delay setting.
+     */
+    //% blockId=maqueen_step_set_turn_search_delay_seconds blockHidden=true
+    export function setTurnSearchDelaySeconds(seconds: number): void {
+        setTurnSearchDelaySecondValue(seconds)
     }
 
     /**
@@ -425,13 +433,21 @@ namespace maqueenStep {
     /**
      * Set the maximum seconds Maqueen may spend searching for a black line while turning.
      */
-    //% blockId=maqueen_step_set_turn_search_timeout_seconds
+    //% blockId=maqueen_step_set_turn_search_timeout_seconds_v2
     //% block="ตั้งเวลาหาเส้นตอนเลี้ยวสูงสุด %seconds วินาที"
     //% seconds.min=1 seconds.max=10 seconds.defl=3
     //% group="ตั้งค่า"
     //% weight=67
-    export function setTurnSearchTimeoutSeconds(seconds: number): void {
+    export function setTurnSearchTimeoutSecondValue(seconds: number): void {
         turnSearchTimeoutMs = Math.max(1, seconds) * 1000
+    }
+
+    /**
+     * Hidden compatibility block for the first second-based turn-search timeout setting.
+     */
+    //% blockId=maqueen_step_set_turn_search_timeout_seconds blockHidden=true
+    export function setTurnSearchTimeoutSeconds(seconds: number): void {
+        setTurnSearchTimeoutSecondValue(seconds)
     }
 
     /**
