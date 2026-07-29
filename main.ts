@@ -59,7 +59,8 @@ namespace maqueenStep {
     const RIGHT_SENSOR = DigitalPin.P14
 
     let blackValue = 0
-    let turn90Ms = 420
+    let turnSearchDelayMs = 200
+    let turnSearchTimeoutMs = 3000
     let searchSide = MaqueenTurnSide.Left
     let searchSpeed = 35
 
@@ -103,6 +104,13 @@ namespace maqueenStep {
 
     function searchLine(): void {
         rotate(searchSide, searchSpeed)
+    }
+
+    function turnTargetSensorSeesBlack(side: MaqueenTurnSide): boolean {
+        if (side == MaqueenTurnSide.Left) {
+            return isBlackPin(LEFT_SENSOR)
+        }
+        return isBlackPin(RIGHT_SENSOR)
     }
 
     /**
@@ -247,28 +255,63 @@ namespace maqueenStep {
     }
 
     /**
-     * Calibrate how long Maqueen should rotate for a 90 degree turn.
+     * Set how long Maqueen should rotate before it starts searching for the next black line.
      */
-    //% blockId=maqueen_step_set_turn_90_time
-    //% block="ตั้งเวลาเลี้ยว 90 องศาเป็น %milliseconds ms"
-    //% milliseconds.min=100 milliseconds.max=2000 milliseconds.defl=420
+    //% blockId=maqueen_step_set_turn_search_delay
+    //% block="ตั้งเวลาหน่วงก่อนหาเส้นตอนเลี้ยวเป็น %milliseconds ms"
+    //% milliseconds.min=0 milliseconds.max=1000 milliseconds.defl=200
     //% group="ตั้งค่า"
     //% weight=68
-    export function setTurn90Time(milliseconds: number): void {
-        turn90Ms = Math.max(100, Math.floor(milliseconds))
+    export function setTurnSearchDelay(milliseconds: number): void {
+        turnSearchDelayMs = Math.max(0, Math.floor(milliseconds))
     }
 
     /**
-     * Turn Maqueen left or right by 90 or 180 degrees.
+     * Set the maximum time Maqueen may spend searching for a black line while turning.
+     */
+    //% blockId=maqueen_step_set_turn_search_timeout
+    //% block="ตั้งเวลาหาเส้นตอนเลี้ยวสูงสุด %milliseconds ms"
+    //% milliseconds.min=500 milliseconds.max=10000 milliseconds.defl=3000
+    //% group="ตั้งค่า"
+    //% weight=67
+    export function setTurnSearchTimeout(milliseconds: number): void {
+        turnSearchTimeoutMs = Math.max(500, Math.floor(milliseconds))
+    }
+
+    /**
+     * Turn Maqueen left or right until the line sensor finds the next black line.
+     * For 90 degrees it stops on the first detected black line.
+     * For 180 degrees it stops on the second detected black line.
      */
     //% blockId=maqueen_step_turn_angle
     //% block="เลี้ยว %side %angle ความเร็ว %speed"
     //% speed.min=0 speed.max=255 speed.defl=70
     //% group="เลี้ยว"
-    //% weight=67
+    //% weight=66
     export function turn(side: MaqueenTurnSide, angle: MaqueenTurnAngle, speed: number): void {
+        const targetHits = angle == MaqueenTurnAngle.Degree180 ? 2 : 1
+        let hits = 0
+        let wasOnLine = false
+        const startedAt = input.runningTime()
+
         rotate(side, speed)
-        basic.pause(angle == MaqueenTurnAngle.Degree180 ? turn90Ms * 2 : turn90Ms)
+        basic.pause(turnSearchDelayMs)
+
+        while (hits < targetHits && input.runningTime() - startedAt < turnSearchTimeoutMs) {
+            rotate(side, speed)
+
+            if (turnTargetSensorSeesBlack(side)) {
+                if (!wasOnLine) {
+                    hits += 1
+                    wasOnLine = true
+                }
+            } else {
+                wasOnLine = false
+            }
+
+            basic.pause(10)
+        }
+
         motorStop(MaqueenMotor.Both)
         basic.pause(100)
     }
