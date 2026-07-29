@@ -1,6 +1,6 @@
 {
     "name": "maqueen-step-line",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "Custom MakeCode blocks for Maqueen line following with checkpoint counting.",
     "license": "MIT",
     "dependencies": {
@@ -9,7 +9,7 @@
     "supportedTargets": [
         "microbit"
     ],
-    "preferredEditor": "tsprj",
+    "preferredEditor": "blocksprj",
     "files": [
         "main.ts",
         "README.md"

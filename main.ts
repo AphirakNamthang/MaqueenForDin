@@ -61,6 +61,7 @@ enum MaqueenCheckpointColor {
  * Blocks for Maqueen line following and checkpoint counting.
  */
 //% weight=100 color=#0f8f6f icon="\uf1b9" block="Maqueen ของน้องดิน"
+//% groups=["เดินตามเส้น", "เลี้ยว", "เซนเซอร์", "มอเตอร์", "ตั้งค่า"]
 namespace maqueenStep {
     const I2C_ADDR = 0x10
     const LEFT_SENSOR = DigitalPin.P13
@@ -103,6 +104,7 @@ namespace maqueenStep {
     //% blockId=maqueen_step_set_black_value
     //% block="ตั้งค่าเซนเซอร์อ่านสีดำเป็น %value"
     //% value.min=0 value.max=1 value.defl=0
+    //% group="ตั้งค่า"
     //% weight=92
     export function setBlackSensorValue(value: number): void {
         blackValue = value == 0 ? 0 : 1
@@ -113,6 +115,7 @@ namespace maqueenStep {
      */
     //% blockId=maqueen_step_read_line_sensor
     //% block="เซนเซอร์เส้น %sensor เจอสีดำ"
+    //% group="เซนเซอร์"
     //% weight=85
     export function lineSensorSeesBlack(sensor: MaqueenLineSensor): boolean {
         if (sensor == MaqueenLineSensor.Left) {
@@ -126,6 +129,7 @@ namespace maqueenStep {
      */
     //% blockId=maqueen_step_line_position
     //% block="ตำแหน่งเส้น"
+    //% group="เซนเซอร์"
     //% weight=80
     export function linePosition(): MaqueenLinePosition {
         const left = isBlackPin(LEFT_SENSOR)
@@ -148,6 +152,7 @@ namespace maqueenStep {
      */
     //% blockId=maqueen_step_checkpoint_detected
     //% block="เจอ checkpoint สี %color"
+    //% group="เซนเซอร์"
     //% weight=78
     export function seesCheckpointColor(color: MaqueenCheckpointColor): boolean {
         return checkpointDetected()
@@ -159,6 +164,7 @@ namespace maqueenStep {
     //% blockId=maqueen_step_motor_run
     //% block="มอเตอร์ %motor วิ่ง %direction ความเร็ว %speed"
     //% speed.min=0 speed.max=255 speed.defl=80
+    //% group="มอเตอร์"
     //% weight=75
     export function motorRun(motor: MaqueenMotor, direction: MaqueenDirection, speed: number): void {
         if (motor == MaqueenMotor.Both) {
@@ -174,6 +180,7 @@ namespace maqueenStep {
      */
     //% blockId=maqueen_step_motor_stop
     //% block="หยุดมอเตอร์ %motor"
+    //% group="มอเตอร์"
     //% weight=70
     export function motorStop(motor: MaqueenMotor): void {
         motorRun(motor, MaqueenDirection.Forward, 0)
@@ -185,6 +192,7 @@ namespace maqueenStep {
     //% blockId=maqueen_step_set_turn_90_time
     //% block="ตั้งเวลาเลี้ยว 90 องศาเป็น %milliseconds ms"
     //% milliseconds.min=100 milliseconds.max=2000 milliseconds.defl=420
+    //% group="ตั้งค่า"
     //% weight=68
     export function setTurn90Time(milliseconds: number): void {
         turn90Ms = Math.max(100, Math.floor(milliseconds))
@@ -196,6 +204,7 @@ namespace maqueenStep {
     //% blockId=maqueen_step_turn_angle
     //% block="เลี้ยว %side %angle ความเร็ว %speed"
     //% speed.min=0 speed.max=255 speed.defl=70
+    //% group="เลี้ยว"
     //% weight=67
     export function turn(side: MaqueenTurnSide, angle: MaqueenTurnAngle, speed: number): void {
         rotate(side, speed)
@@ -211,6 +220,8 @@ namespace maqueenStep {
     //% block="เดินตามเส้นดำ ความเร็ว %speed ความเร็วเลี้ยว %turnSpeed"
     //% speed.min=0 speed.max=255 speed.defl=80
     //% turnSpeed.min=0 turnSpeed.max=255 turnSpeed.defl=45
+    //% inlineInputMode=inline
+    //% group="เดินตามเส้น"
     //% weight=65
     export function followBlackLineOnce(speed: number, turnSpeed: number): void {
         const position = linePosition()
@@ -235,6 +246,8 @@ namespace maqueenStep {
     //% steps.min=1 steps.max=20 steps.defl=2
     //% speed.min=0 speed.max=255 speed.defl=80
     //% turnSpeed.min=0 turnSpeed.max=255 turnSpeed.defl=45
+    //% inlineInputMode=inline
+    //% group="เดินตามเส้น"
     //% weight=100
     export function followLineForwardSteps(steps: number, speed: number, turnSpeed: number): void {
         let count = 0
