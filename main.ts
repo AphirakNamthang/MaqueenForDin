@@ -276,14 +276,14 @@ namespace maqueenStep {
      */
     //% blockId=maqueen_step_spin_time
     //% block="หมุน %side เป็นเวลา %seconds วินาที ความเร็ว %speed"
-    //% seconds.min=0 seconds.max=10 seconds.defl=0.42
+    //% seconds.min=1 seconds.max=10 seconds.defl=1
     //% speed.min=0 speed.max=255 speed.defl=70
     //% inlineInputMode=inline
     //% group="มอเตอร์"
     //% weight=78
     export function spinTime(side: MaqueenTurnSide, seconds: number, speed: number): void {
         rotate(side, speed)
-        basic.pause(Math.max(0, seconds) * 1000)
+        basic.pause(Math.max(1, seconds) * 1000)
         motorStop(MaqueenMotor.Both)
         basic.pause(100)
     }
@@ -310,14 +310,14 @@ namespace maqueenStep {
      */
     //% blockId=maqueen_step_turn_time
     //% block="เลี้ยวแบบเวลา %side เป็นเวลา %seconds วินาที ความเร็ว %speed"
-    //% seconds.min=0 seconds.max=10 seconds.defl=0.42
+    //% seconds.min=1 seconds.max=10 seconds.defl=1
     //% speed.min=0 speed.max=255 speed.defl=70
     //% inlineInputMode=inline
     //% group="เลี้ยว"
     //% weight=65
     export function turnTime(side: MaqueenTurnSide, seconds: number, speed: number): void {
         pivotTurn(side, speed)
-        basic.pause(Math.max(0, seconds) * 1000)
+        basic.pause(Math.max(1, seconds) * 1000)
         motorStop(MaqueenMotor.Both)
         basic.pause(100)
     }
