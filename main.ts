@@ -274,7 +274,7 @@ namespace maqueenStep {
      * Spin Maqueen left or right for a number of milliseconds without using line sensors.
      * A spin runs the left and right motors in opposite directions.
      */
-    //% blockId=maqueen_step_spin_time
+    //% blockId=maqueen_step_spin_seconds
     //% block="หมุน %side เป็นเวลา %seconds วินาที ความเร็ว %speed"
     //% seconds.min=1 seconds.max=10 seconds.defl=1
     //% speed.min=0 speed.max=255 speed.defl=70
@@ -286,6 +286,14 @@ namespace maqueenStep {
         basic.pause(Math.max(1, seconds) * 1000)
         motorStop(MaqueenMotor.Both)
         basic.pause(100)
+    }
+
+    /**
+     * Hidden compatibility block for the old millisecond spin block.
+     */
+    //% blockId=maqueen_step_spin_time blockHidden=true
+    export function spinTimeMs(side: MaqueenTurnSide, milliseconds: number, speed: number): void {
+        spinTime(side, milliseconds / 1000, speed)
     }
 
     /**
@@ -308,7 +316,7 @@ namespace maqueenStep {
      * Turn Maqueen left or right for a number of milliseconds without using line sensors.
      * A turn stops one motor and runs the other motor.
      */
-    //% blockId=maqueen_step_turn_time
+    //% blockId=maqueen_step_turn_seconds
     //% block="เลี้ยวแบบเวลา %side เป็นเวลา %seconds วินาที ความเร็ว %speed"
     //% seconds.min=1 seconds.max=10 seconds.defl=1
     //% speed.min=0 speed.max=255 speed.defl=70
@@ -320,6 +328,14 @@ namespace maqueenStep {
         basic.pause(Math.max(1, seconds) * 1000)
         motorStop(MaqueenMotor.Both)
         basic.pause(100)
+    }
+
+    /**
+     * Hidden compatibility block for the old millisecond turn block.
+     */
+    //% blockId=maqueen_step_turn_time blockHidden=true
+    export function turnTimeMs(side: MaqueenTurnSide, milliseconds: number, speed: number): void {
+        turnTime(side, milliseconds / 1000, speed)
     }
 
     /**
