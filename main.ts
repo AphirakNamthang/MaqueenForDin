@@ -102,6 +102,16 @@ namespace maqueenStep {
         }
     }
 
+    function pivotTurn(side: MaqueenTurnSide, speed: number): void {
+        if (side == MaqueenTurnSide.Left) {
+            motorStop(MaqueenMotor.Left)
+            motorRun(MaqueenMotor.Right, MaqueenDirection.Forward, speed)
+        } else {
+            motorRun(MaqueenMotor.Left, MaqueenDirection.Forward, speed)
+            motorStop(MaqueenMotor.Right)
+        }
+    }
+
     function searchLine(): void {
         rotate(searchSide, searchSpeed)
     }
@@ -261,7 +271,8 @@ namespace maqueenStep {
     }
 
     /**
-     * Rotate Maqueen left or right for a number of milliseconds without using line sensors.
+     * Turn Maqueen left or right for a number of milliseconds without using line sensors.
+     * A turn stops one motor and runs the other motor.
      */
     //% blockId=maqueen_step_turn_time
     //% block="เลี้ยวแบบเวลา %side เป็นเวลา %milliseconds ms ความเร็ว %speed"
@@ -271,14 +282,15 @@ namespace maqueenStep {
     //% group="เลี้ยว"
     //% weight=65
     export function turnTime(side: MaqueenTurnSide, milliseconds: number, speed: number): void {
-        rotate(side, speed)
+        pivotTurn(side, speed)
         basic.pause(Math.max(0, milliseconds))
         motorStop(MaqueenMotor.Both)
         basic.pause(100)
     }
 
     /**
-     * Rotate Maqueen left or right for an estimated 90 or 180 degree turn by time only.
+     * Turn Maqueen left or right for an estimated 90 or 180 degree turn by time only.
+     * A turn stops one motor and runs the other motor.
      */
     //% blockId=maqueen_step_turn_angle_time
     //% block="เลี้ยวแบบเวลา %side %angle ความเร็ว %speed เวลา 90 องศา %turn90Milliseconds ms"
@@ -290,6 +302,68 @@ namespace maqueenStep {
     export function turnAngleByTime(side: MaqueenTurnSide, angle: MaqueenTurnAngle, speed: number, turn90Milliseconds: number): void {
         const duration = angle == MaqueenTurnAngle.Degree180 ? turn90Milliseconds * 2 : turn90Milliseconds
         turnTime(side, duration, speed)
+    }
+
+    /**
+     * Rotate Maqueen left or right for a number of milliseconds without using line sensors.
+     * A rotation runs the left and right motors in opposite directions.
+     */
+    //% blockId=maqueen_step_rotate_time
+    //% block="หมุนแบบเวลา %side เป็นเวลา %milliseconds ms ความเร็ว %speed"
+    //% milliseconds.min=0 milliseconds.max=10000 milliseconds.defl=420
+    //% speed.min=0 speed.max=255 speed.defl=70
+    //% inlineInputMode=inline
+    //% group="เลี้ยว"
+    //% weight=61
+    export function rotateTime(side: MaqueenTurnSide, milliseconds: number, speed: number): void {
+        rotate(side, speed)
+        basic.pause(Math.max(0, milliseconds))
+        motorStop(MaqueenMotor.Both)
+        basic.pause(100)
+    }
+
+    /**
+     * Rotate Maqueen left or right for an estimated 90 or 180 degree turn by time only.
+     * A rotation runs the left and right motors in opposite directions.
+     */
+    //% blockId=maqueen_step_rotate_angle_time
+    //% block="หมุนแบบเวลา %side %angle ความเร็ว %speed เวลา 90 องศา %turn90Milliseconds ms"
+    //% speed.min=0 speed.max=255 speed.defl=70
+    //% turn90Milliseconds.min=100 turn90Milliseconds.max=2000 turn90Milliseconds.defl=420
+    //% inlineInputMode=inline
+    //% group="เลี้ยว"
+    //% weight=60
+    export function rotateAngleByTime(side: MaqueenTurnSide, angle: MaqueenTurnAngle, speed: number, turn90Milliseconds: number): void {
+        const duration = angle == MaqueenTurnAngle.Degree180 ? turn90Milliseconds * 2 : turn90Milliseconds
+        rotateTime(side, duration, speed)
+    }
+
+    /**
+     * Turn left by time only without using line sensors.
+     */
+    //% blockId=maqueen_step_turn_left_time
+    //% block="เลี้ยวซ้ายแบบเวลา %milliseconds ms ความเร็ว %speed"
+    //% milliseconds.min=0 milliseconds.max=10000 milliseconds.defl=420
+    //% speed.min=0 speed.max=255 speed.defl=70
+    //% inlineInputMode=inline
+    //% group="เลี้ยว"
+    //% weight=63
+    export function turnLeftTime(milliseconds: number, speed: number): void {
+        turnTime(MaqueenTurnSide.Left, milliseconds, speed)
+    }
+
+    /**
+     * Turn right by time only without using line sensors.
+     */
+    //% blockId=maqueen_step_turn_right_time
+    //% block="เลี้ยวขวาแบบเวลา %milliseconds ms ความเร็ว %speed"
+    //% milliseconds.min=0 milliseconds.max=10000 milliseconds.defl=420
+    //% speed.min=0 speed.max=255 speed.defl=70
+    //% inlineInputMode=inline
+    //% group="เลี้ยว"
+    //% weight=62
+    export function turnRightTime(milliseconds: number, speed: number): void {
+        turnTime(MaqueenTurnSide.Right, milliseconds, speed)
     }
 
     /**
@@ -334,6 +408,7 @@ namespace maqueenStep {
 
     /**
      * Turn Maqueen left or right until the line sensor finds the next black line.
+     * A turn stops one motor and runs the other motor.
      * For 90 degrees it stops on the first detected black line.
      * For 180 degrees it stops on the second detected black line.
      */
@@ -348,11 +423,11 @@ namespace maqueenStep {
         let wasOnLine = false
         const startedAt = input.runningTime()
 
-        rotate(side, speed)
+        pivotTurn(side, speed)
         basic.pause(turnSearchDelayMs)
 
         while (hits < targetHits && input.runningTime() - startedAt < turnSearchTimeoutMs) {
-            rotate(side, speed)
+            pivotTurn(side, speed)
 
             if (turnTargetSensorSeesBlack(side)) {
                 if (!wasOnLine) {
