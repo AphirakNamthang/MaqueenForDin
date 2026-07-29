@@ -354,13 +354,6 @@ namespace maqueenStep {
     /**
      * Turn left by time only without using line sensors.
      */
-    //% blockId=maqueen_step_turn_left_time
-    //% block="เลี้ยวซ้ายแบบเวลา %milliseconds ms ความเร็ว %speed"
-    //% milliseconds.min=0 milliseconds.max=10000 milliseconds.defl=420
-    //% speed.min=0 speed.max=255 speed.defl=70
-    //% inlineInputMode=inline
-    //% group="เลี้ยว"
-    //% weight=63
     export function turnLeftTime(milliseconds: number, speed: number): void {
         turnTime(MaqueenTurnSide.Left, milliseconds, speed)
     }
@@ -368,13 +361,6 @@ namespace maqueenStep {
     /**
      * Turn right by time only without using line sensors.
      */
-    //% blockId=maqueen_step_turn_right_time
-    //% block="เลี้ยวขวาแบบเวลา %milliseconds ms ความเร็ว %speed"
-    //% milliseconds.min=0 milliseconds.max=10000 milliseconds.defl=420
-    //% speed.min=0 speed.max=255 speed.defl=70
-    //% inlineInputMode=inline
-    //% group="เลี้ยว"
-    //% weight=62
     export function turnRightTime(milliseconds: number, speed: number): void {
         turnTime(MaqueenTurnSide.Right, milliseconds, speed)
     }
