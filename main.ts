@@ -176,6 +176,17 @@ namespace maqueenStep {
     }
 
     /**
+     * Check whether both line sensors see white or no black line.
+     */
+    //% blockId=maqueen_step_no_black_line
+    //% block="ไม่เจอเส้นดำเลย"
+    //% group="เซนเซอร์"
+    //% weight=79
+    export function noBlackLine(): boolean {
+        return !isBlackPin(LEFT_SENSOR) && !isBlackPin(RIGHT_SENSOR)
+    }
+
+    /**
      * Detect a black line intersection checkpoint.
      * A checkpoint is detected when both left and right line sensors see black at the same time.
      */
@@ -236,6 +247,17 @@ namespace maqueenStep {
     //% weight=72
     export function stopCar(): void {
         motorStop(MaqueenMotor.Both)
+    }
+
+    /**
+     * Rotate slowly using the configured search direction and speed.
+     */
+    //% blockId=maqueen_step_search_line_once
+    //% block="หมุนหาเส้น"
+    //% group="มอเตอร์"
+    //% weight=73
+    export function searchLineOnce(): void {
+        searchLine()
     }
 
     /**
