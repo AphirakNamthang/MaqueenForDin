@@ -48,15 +48,6 @@ enum MaqueenTurnAngle {
     Degree180 = 180
 }
 
-enum MaqueenCheckpointColor {
-    //% block="แดง"
-    Red = 0,
-    //% block="น้ำเงิน"
-    Blue = 1,
-    //% block="แดงหรือน้ำเงิน"
-    RedOrBlue = 2
-}
-
 /**
  * Blocks for Maqueen line following and checkpoint counting.
  */
@@ -85,6 +76,17 @@ namespace maqueenStep {
 
     function checkpointDetected(): boolean {
         return isBlackPin(LEFT_SENSOR) && isBlackPin(RIGHT_SENSOR)
+    }
+
+    function sensorPin(sensor: MaqueenLineSensor): AnalogPin {
+        if (sensor == MaqueenLineSensor.Left) {
+            return <AnalogPin><number>DigitalPin.P13
+        }
+        return <AnalogPin><number>DigitalPin.P14
+    }
+
+    function analogSensorValue(sensor: MaqueenLineSensor): number {
+        return pins.analogReadPin(sensorPin(sensor))
     }
 
     function rotate(side: MaqueenTurnSide, speed: number): void {
@@ -147,15 +149,27 @@ namespace maqueenStep {
     }
 
     /**
-     * Read a red or blue checkpoint marker using the Maqueen line sensors.
-     * The normal Maqueen sensor cannot identify red/blue; it only detects whether the marker is dark enough.
+     * Detect a black line intersection checkpoint.
+     * A checkpoint is detected when both left and right line sensors see black at the same time.
      */
-    //% blockId=maqueen_step_checkpoint_detected
-    //% block="เจอ checkpoint สี %color"
+    //% blockId=maqueen_step_black_intersection_detected
+    //% block="เจอจุดตัดเส้นดำ"
     //% group="เซนเซอร์"
     //% weight=78
-    export function seesCheckpointColor(color: MaqueenCheckpointColor): boolean {
+    export function seesBlackIntersection(): boolean {
         return checkpointDetected()
+    }
+
+    /**
+     * Read the analog value of a Maqueen line sensor.
+     * If the Maqueen model only has digital line sensors, this value may act like low/high instead of a smooth color value.
+     */
+    //% blockId=maqueen_step_line_sensor_analog
+    //% block="ค่า analog เซนเซอร์เส้น %sensor"
+    //% group="เซนเซอร์"
+    //% weight=77
+    export function lineSensorAnalog(sensor: MaqueenLineSensor): number {
+        return analogSensorValue(sensor)
     }
 
     /**
@@ -265,11 +279,11 @@ namespace maqueenStep {
     }
 
     /**
-     * Follow a black line until the Maqueen crosses the requested number of checkpoints.
-     * A checkpoint is counted when both line sensors see the red/blue marker as dark at the same time.
+     * Follow a black line until the Maqueen crosses the requested number of black line intersections.
+     * A checkpoint is counted when both line sensors see black at the same time.
      */
     //% blockId=maqueen_step_forward_steps
-    //% block="เดินตามเส้นไปข้างหน้า %steps ก้าว ความเร็ว %speed ความเร็วเลี้ยว %turnSpeed"
+    //% block="เดินตามเส้นดำไปข้างหน้า %steps ก้าว (จุดตัด) ความเร็ว %speed ความเร็วเลี้ยว %turnSpeed"
     //% steps.min=1 steps.max=20 steps.defl=2
     //% speed.min=0 speed.max=255 speed.defl=80
     //% turnSpeed.min=0 turnSpeed.max=255 turnSpeed.defl=45
