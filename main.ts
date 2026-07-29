@@ -326,6 +326,7 @@ namespace maqueenStep {
      * Turn Maqueen left or right for an estimated 90 or 180 degree turn by time only.
      * A turn stops one motor and runs the other motor.
      */
+    //% blockId=maqueen_step_turn_angle_time blockHidden=true
     export function turnAngleByTime(side: MaqueenTurnSide, angle: MaqueenTurnAngle, speed: number, turn90Milliseconds: number): void {
         const duration = angle == MaqueenTurnAngle.Degree180 ? turn90Milliseconds * 2 : turn90Milliseconds
         turnTime(side, duration, speed)
@@ -335,6 +336,7 @@ namespace maqueenStep {
      * Rotate Maqueen left or right for a number of milliseconds without using line sensors.
      * A rotation runs the left and right motors in opposite directions.
      */
+    //% blockId=maqueen_step_rotate_time blockHidden=true
     export function rotateTime(side: MaqueenTurnSide, milliseconds: number, speed: number): void {
         rotate(side, speed)
         basic.pause(Math.max(0, milliseconds))
@@ -346,6 +348,7 @@ namespace maqueenStep {
      * Rotate Maqueen left or right for an estimated 90 or 180 degree turn by time only.
      * A rotation runs the left and right motors in opposite directions.
      */
+    //% blockId=maqueen_step_rotate_angle_time blockHidden=true
     export function rotateAngleByTime(side: MaqueenTurnSide, angle: MaqueenTurnAngle, speed: number, turn90Milliseconds: number): void {
         const duration = angle == MaqueenTurnAngle.Degree180 ? turn90Milliseconds * 2 : turn90Milliseconds
         rotateTime(side, duration, speed)
@@ -354,6 +357,7 @@ namespace maqueenStep {
     /**
      * Turn left by time only without using line sensors.
      */
+    //% blockId=maqueen_step_turn_left_time blockHidden=true
     export function turnLeftTime(milliseconds: number, speed: number): void {
         turnTime(MaqueenTurnSide.Left, milliseconds, speed)
     }
@@ -361,6 +365,7 @@ namespace maqueenStep {
     /**
      * Turn right by time only without using line sensors.
      */
+    //% blockId=maqueen_step_turn_right_time blockHidden=true
     export function turnRightTime(milliseconds: number, speed: number): void {
         turnTime(MaqueenTurnSide.Right, milliseconds, speed)
     }
