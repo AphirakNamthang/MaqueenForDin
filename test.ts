@@ -1,5 +1,4 @@
 maqueenStep.setBlackSensorValue(0)
-maqueenStep.followLineForwardSteps(2, 80, 45)
+maqueenStep.driveSeconds(MaqueenDirection.Forward, 2, 80)
 maqueenStep.turn(MaqueenTurnSide.Left, MaqueenTurnAngle.Degree90, 70)
-maqueenStep.followLineForwardSteps(1, 80, 45)
-maqueenStep.turn(MaqueenTurnSide.Right, MaqueenTurnAngle.Degree180, 70)
+maqueenStep.driveSeconds(MaqueenDirection.Backward, 3, 80)

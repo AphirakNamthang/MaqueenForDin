@@ -198,6 +198,22 @@ namespace maqueenStep {
     }
 
     /**
+     * Move Maqueen forward or backward for a number of seconds without following a line.
+     */
+    //% blockId=maqueen_step_drive_seconds
+    //% block="รถวิ่ง %direction เป็นเวลา %seconds วินาที ความเร็ว %speed"
+    //% seconds.min=0.1 seconds.max=30 seconds.defl=2
+    //% speed.min=0 speed.max=255 speed.defl=80
+    //% inlineInputMode=inline
+    //% group="มอเตอร์"
+    //% weight=74
+    export function driveSeconds(direction: MaqueenDirection, seconds: number, speed: number): void {
+        motorRun(MaqueenMotor.Both, direction, speed)
+        basic.pause(Math.max(0, seconds) * 1000)
+        motorStop(MaqueenMotor.Both)
+    }
+
+    /**
      * Calibrate how long Maqueen should rotate for a 90 degree turn.
      */
     //% blockId=maqueen_step_set_turn_90_time
