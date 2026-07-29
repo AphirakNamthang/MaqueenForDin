@@ -264,7 +264,7 @@ namespace maqueenStep {
      * Rotate Maqueen left or right for a number of milliseconds without using line sensors.
      */
     //% blockId=maqueen_step_turn_time
-    //% block="หมุน %side เป็นเวลา %milliseconds ms ความเร็ว %speed"
+    //% block="เลี้ยวแบบเวลา %side เป็นเวลา %milliseconds ms ความเร็ว %speed"
     //% milliseconds.min=0 milliseconds.max=10000 milliseconds.defl=420
     //% speed.min=0 speed.max=255 speed.defl=70
     //% inlineInputMode=inline
@@ -281,7 +281,7 @@ namespace maqueenStep {
      * Rotate Maqueen left or right for an estimated 90 or 180 degree turn by time only.
      */
     //% blockId=maqueen_step_turn_angle_time
-    //% block="หมุนตามเวลา %side %angle ความเร็ว %speed เวลา 90 องศา %turn90Milliseconds ms"
+    //% block="เลี้ยวแบบเวลา %side %angle ความเร็ว %speed เวลา 90 องศา %turn90Milliseconds ms"
     //% speed.min=0 speed.max=255 speed.defl=70
     //% turn90Milliseconds.min=100 turn90Milliseconds.max=2000 turn90Milliseconds.defl=420
     //% inlineInputMode=inline
