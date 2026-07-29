@@ -4,8 +4,7 @@
     "description": "Custom MakeCode blocks for Maqueen line following with checkpoint counting.",
     "license": "MIT",
     "dependencies": {
-        "core": "*",
-        "microbit": "*"
+        "core": "*"
     },
     "supportedTargets": [
         "microbit"
