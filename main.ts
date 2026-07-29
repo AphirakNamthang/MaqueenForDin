@@ -326,13 +326,6 @@ namespace maqueenStep {
      * Turn Maqueen left or right for an estimated 90 or 180 degree turn by time only.
      * A turn stops one motor and runs the other motor.
      */
-    //% blockId=maqueen_step_turn_angle_time
-    //% block="เลี้ยวแบบเวลา %side %angle ความเร็ว %speed เวลา 90 องศา %turn90Milliseconds ms"
-    //% speed.min=0 speed.max=255 speed.defl=70
-    //% turn90Milliseconds.min=100 turn90Milliseconds.max=2000 turn90Milliseconds.defl=420
-    //% inlineInputMode=inline
-    //% group="เลี้ยว"
-    //% weight=64
     export function turnAngleByTime(side: MaqueenTurnSide, angle: MaqueenTurnAngle, speed: number, turn90Milliseconds: number): void {
         const duration = angle == MaqueenTurnAngle.Degree180 ? turn90Milliseconds * 2 : turn90Milliseconds
         turnTime(side, duration, speed)
@@ -342,13 +335,6 @@ namespace maqueenStep {
      * Rotate Maqueen left or right for a number of milliseconds without using line sensors.
      * A rotation runs the left and right motors in opposite directions.
      */
-    //% blockId=maqueen_step_rotate_time
-    //% block="หมุนแบบเวลา %side เป็นเวลา %milliseconds ms ความเร็ว %speed"
-    //% milliseconds.min=0 milliseconds.max=10000 milliseconds.defl=420
-    //% speed.min=0 speed.max=255 speed.defl=70
-    //% inlineInputMode=inline
-    //% group="มอเตอร์"
-    //% weight=77
     export function rotateTime(side: MaqueenTurnSide, milliseconds: number, speed: number): void {
         rotate(side, speed)
         basic.pause(Math.max(0, milliseconds))
@@ -360,13 +346,6 @@ namespace maqueenStep {
      * Rotate Maqueen left or right for an estimated 90 or 180 degree turn by time only.
      * A rotation runs the left and right motors in opposite directions.
      */
-    //% blockId=maqueen_step_rotate_angle_time
-    //% block="หมุนแบบเวลา %side %angle ความเร็ว %speed เวลา 90 องศา %turn90Milliseconds ms"
-    //% speed.min=0 speed.max=255 speed.defl=70
-    //% turn90Milliseconds.min=100 turn90Milliseconds.max=2000 turn90Milliseconds.defl=420
-    //% inlineInputMode=inline
-    //% group="มอเตอร์"
-    //% weight=76
     export function rotateAngleByTime(side: MaqueenTurnSide, angle: MaqueenTurnAngle, speed: number, turn90Milliseconds: number): void {
         const duration = angle == MaqueenTurnAngle.Degree180 ? turn90Milliseconds * 2 : turn90Milliseconds
         rotateTime(side, duration, speed)
