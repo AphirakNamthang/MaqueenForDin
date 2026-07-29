@@ -187,6 +187,17 @@ namespace maqueenStep {
     }
 
     /**
+     * Stop both Maqueen motors.
+     */
+    //% blockId=maqueen_step_stop_car
+    //% block="หยุดรถ Maqueen"
+    //% group="มอเตอร์"
+    //% weight=72
+    export function stopCar(): void {
+        motorStop(MaqueenMotor.Both)
+    }
+
+    /**
      * Calibrate how long Maqueen should rotate for a 90 degree turn.
      */
     //% blockId=maqueen_step_set_turn_90_time
