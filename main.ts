@@ -60,6 +60,8 @@ namespace maqueenStep {
 
     let blackValue = 0
     let turn90Ms = 420
+    let searchSide = MaqueenTurnSide.Left
+    let searchSpeed = 35
 
     function clampSpeed(speed: number): number {
         return Math.max(0, Math.min(255, speed))
@@ -99,6 +101,10 @@ namespace maqueenStep {
         }
     }
 
+    function searchLine(): void {
+        rotate(searchSide, searchSpeed)
+    }
+
     /**
      * Set the digital value that means the line sensor is on black.
      * Most Maqueen line sensors read 0 on black and 1 on white.
@@ -110,6 +116,19 @@ namespace maqueenStep {
     //% weight=92
     export function setBlackSensorValue(value: number): void {
         blackValue = value == 0 ? 0 : 1
+    }
+
+    /**
+     * Set how Maqueen searches for the line when both line sensors see white.
+     */
+    //% blockId=maqueen_step_set_search_line
+    //% block="ตั้งค่าหาเส้น หมุน %side ความเร็ว %speed"
+    //% speed.min=0 speed.max=255 speed.defl=35
+    //% group="ตั้งค่า"
+    //% weight=91
+    export function setSearchLine(side: MaqueenTurnSide, speed: number): void {
+        searchSide = side
+        searchSpeed = clampSpeed(speed)
     }
 
     /**
@@ -273,8 +292,10 @@ namespace maqueenStep {
         } else if (position == MaqueenLinePosition.Right) {
             motorRun(MaqueenMotor.Left, MaqueenDirection.Forward, speed)
             motorRun(MaqueenMotor.Right, MaqueenDirection.Forward, turnSpeed)
-        } else {
+        } else if (position == MaqueenLinePosition.Checkpoint) {
             motorRun(MaqueenMotor.Both, MaqueenDirection.Forward, speed)
+        } else {
+            searchLine()
         }
     }
 
