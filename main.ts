@@ -60,7 +60,7 @@ enum MaqueenCheckpointColor {
 /**
  * Blocks for Maqueen line following and checkpoint counting.
  */
-//% weight=100 color=#0f8f6f icon="\uf1b9" block="Maqueen เดินตามเส้น"
+//% weight=100 color=#0f8f6f icon="\uf1b9" block="Maqueen ของน้องดิน"
 namespace maqueenStep {
     const I2C_ADDR = 0x10
     const LEFT_SENSOR = DigitalPin.P13

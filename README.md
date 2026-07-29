@@ -44,6 +44,6 @@ Maqueen รุ่นปกติใช้ line sensor แบบดิจิท�
 2. เปิด <https://makecode.microbit.org/>
 3. เลือก **Extensions**
 4. วาง URL ของ repository
-5. เลือกหมวดบล็อก **Maqueen เดินตามเส้น**
+5. เลือกหมวดบล็อก **Maqueen ของน้องดิน**
 
 ถ้าต้องการทดสอบแบบ local ให้ใช้ **Import URL** หรือ import repository ตามวิธีของ MakeCode
