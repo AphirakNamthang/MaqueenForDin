@@ -403,25 +403,41 @@ namespace maqueenStep {
     }
 
     /**
-     * Set how long Maqueen should rotate before it starts searching for the next black line.
+     * Set how many seconds Maqueen should turn before it starts searching for the next black line.
      */
-    //% blockId=maqueen_step_set_turn_search_delay
-    //% block="ตั้งเวลาหน่วงก่อนหาเส้นตอนเลี้ยวเป็น %milliseconds ms"
-    //% milliseconds.min=0 milliseconds.max=1000 milliseconds.defl=200
+    //% blockId=maqueen_step_set_turn_search_delay_seconds
+    //% block="ตั้งเวลาหน่วงก่อนหาเส้นตอนเลี้ยวเป็น %seconds วินาที"
+    //% seconds.min=1 seconds.max=10 seconds.defl=1
     //% group="ตั้งค่า"
     //% weight=68
+    export function setTurnSearchDelaySeconds(seconds: number): void {
+        turnSearchDelayMs = Math.max(1, seconds) * 1000
+    }
+
+    /**
+     * Hidden compatibility block for the old millisecond turn-search delay setting.
+     */
+    //% blockId=maqueen_step_set_turn_search_delay blockHidden=true
     export function setTurnSearchDelay(milliseconds: number): void {
         turnSearchDelayMs = Math.max(0, Math.floor(milliseconds))
     }
 
     /**
-     * Set the maximum time Maqueen may spend searching for a black line while turning.
+     * Set the maximum seconds Maqueen may spend searching for a black line while turning.
      */
-    //% blockId=maqueen_step_set_turn_search_timeout
-    //% block="ตั้งเวลาหาเส้นตอนเลี้ยวสูงสุด %milliseconds ms"
-    //% milliseconds.min=500 milliseconds.max=10000 milliseconds.defl=3000
+    //% blockId=maqueen_step_set_turn_search_timeout_seconds
+    //% block="ตั้งเวลาหาเส้นตอนเลี้ยวสูงสุด %seconds วินาที"
+    //% seconds.min=1 seconds.max=10 seconds.defl=3
     //% group="ตั้งค่า"
     //% weight=67
+    export function setTurnSearchTimeoutSeconds(seconds: number): void {
+        turnSearchTimeoutMs = Math.max(1, seconds) * 1000
+    }
+
+    /**
+     * Hidden compatibility block for the old millisecond turn-search timeout setting.
+     */
+    //% blockId=maqueen_step_set_turn_search_timeout blockHidden=true
     export function setTurnSearchTimeout(milliseconds: number): void {
         turnSearchTimeoutMs = Math.max(500, Math.floor(milliseconds))
     }
