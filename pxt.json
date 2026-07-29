@@ -1,6 +1,6 @@
 {
     "name": "maqueen-step-line",
-    "version": "0.0.19",
+    "version": "0.0.20",
     "description": "Custom MakeCode blocks for Maqueen line following with checkpoint counting.",
     "license": "MIT",
     "dependencies": {

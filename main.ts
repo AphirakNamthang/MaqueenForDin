@@ -275,15 +275,15 @@ namespace maqueenStep {
      * A spin runs the left and right motors in opposite directions.
      */
     //% blockId=maqueen_step_spin_time
-    //% block="หมุน %side เป็นเวลา %milliseconds ms ความเร็ว %speed"
-    //% milliseconds.min=0 milliseconds.max=10000 milliseconds.defl=420
+    //% block="หมุน %side เป็นเวลา %seconds วินาที ความเร็ว %speed"
+    //% seconds.min=0 seconds.max=10 seconds.defl=0.42
     //% speed.min=0 speed.max=255 speed.defl=70
     //% inlineInputMode=inline
     //% group="มอเตอร์"
     //% weight=78
-    export function spinTime(side: MaqueenTurnSide, milliseconds: number, speed: number): void {
+    export function spinTime(side: MaqueenTurnSide, seconds: number, speed: number): void {
         rotate(side, speed)
-        basic.pause(Math.max(0, milliseconds))
+        basic.pause(Math.max(0, seconds) * 1000)
         motorStop(MaqueenMotor.Both)
         basic.pause(100)
     }
@@ -301,7 +301,7 @@ namespace maqueenStep {
     //% weight=77
     export function spinAngleByTime(side: MaqueenTurnSide, angle: MaqueenTurnAngle, speed: number, turn90Milliseconds: number): void {
         const duration = angle == MaqueenTurnAngle.Degree180 ? turn90Milliseconds * 2 : turn90Milliseconds
-        spinTime(side, duration, speed)
+        spinTime(side, duration / 1000, speed)
     }
 
     /**
@@ -309,15 +309,15 @@ namespace maqueenStep {
      * A turn stops one motor and runs the other motor.
      */
     //% blockId=maqueen_step_turn_time
-    //% block="เลี้ยวแบบเวลา %side เป็นเวลา %milliseconds ms ความเร็ว %speed"
-    //% milliseconds.min=0 milliseconds.max=10000 milliseconds.defl=420
+    //% block="เลี้ยวแบบเวลา %side เป็นเวลา %seconds วินาที ความเร็ว %speed"
+    //% seconds.min=0 seconds.max=10 seconds.defl=0.42
     //% speed.min=0 speed.max=255 speed.defl=70
     //% inlineInputMode=inline
     //% group="เลี้ยว"
     //% weight=65
-    export function turnTime(side: MaqueenTurnSide, milliseconds: number, speed: number): void {
+    export function turnTime(side: MaqueenTurnSide, seconds: number, speed: number): void {
         pivotTurn(side, speed)
-        basic.pause(Math.max(0, milliseconds))
+        basic.pause(Math.max(0, seconds) * 1000)
         motorStop(MaqueenMotor.Both)
         basic.pause(100)
     }
@@ -329,7 +329,7 @@ namespace maqueenStep {
     //% blockId=maqueen_step_turn_angle_time blockHidden=true
     export function turnAngleByTime(side: MaqueenTurnSide, angle: MaqueenTurnAngle, speed: number, turn90Milliseconds: number): void {
         const duration = angle == MaqueenTurnAngle.Degree180 ? turn90Milliseconds * 2 : turn90Milliseconds
-        turnTime(side, duration, speed)
+        turnTime(side, duration / 1000, speed)
     }
 
     /**
@@ -359,7 +359,7 @@ namespace maqueenStep {
      */
     //% blockId=maqueen_step_turn_left_time blockHidden=true
     export function turnLeftTime(milliseconds: number, speed: number): void {
-        turnTime(MaqueenTurnSide.Left, milliseconds, speed)
+        turnTime(MaqueenTurnSide.Left, milliseconds / 1000, speed)
     }
 
     /**
@@ -367,7 +367,7 @@ namespace maqueenStep {
      */
     //% blockId=maqueen_step_turn_right_time blockHidden=true
     export function turnRightTime(milliseconds: number, speed: number): void {
-        turnTime(MaqueenTurnSide.Right, milliseconds, speed)
+        turnTime(MaqueenTurnSide.Right, milliseconds / 1000, speed)
     }
 
     /**
