@@ -58,10 +58,11 @@ namespace maqueenStep {
     const LEFT_SENSOR = DigitalPin.P13
     const RIGHT_SENSOR = DigitalPin.P14
 
-    let blackValue = 0
+    const BLACK_VALUE = 1
     let turnSearchDelayMs = 200
     let turnSearchTimeoutMs = 3000
     let checkpointDebounceMs = 500
+    let configuredTurnSpeed = 70
     let searchSide = MaqueenTurnSide.Left
     let searchSpeed = 35
 
@@ -78,7 +79,7 @@ namespace maqueenStep {
     }
 
     function isBlackPin(pin: DigitalPin): boolean {
-        return pins.digitalReadPin(pin) == blackValue
+        return pins.digitalReadPin(pin) == BLACK_VALUE
     }
 
     function checkpointDetected(): boolean {
@@ -132,16 +133,10 @@ namespace maqueenStep {
     }
 
     /**
-     * Set the digital value that means the line sensor is on black.
-     * Most Maqueen line sensors read 0 on black and 1 on white.
+     * Hidden compatibility block. This extension fixes black sensor value to 1.
      */
-    //% blockId=maqueen_step_set_black_value
-    //% block="ตั้งค่าเซนเซอร์อ่านสีดำเป็น %value"
-    //% value.min=0 value.max=1 value.defl=0
-    //% group="ตั้งค่า"
-    //% weight=92
+    //% blockId=maqueen_step_set_black_value blockHidden=true
     export function setBlackSensorValue(value: number): void {
-        blackValue = value == 0 ? 0 : 1
     }
 
     /**
@@ -155,6 +150,18 @@ namespace maqueenStep {
     export function setSearchLine(side: MaqueenTurnSide, speed: number): void {
         searchSide = side
         searchSpeed = clampSpeed(speed)
+    }
+
+    /**
+     * Set turn speed used by the simple turn block.
+     */
+    //% blockId=maqueen_step_set_turn_speed
+    //% block="ตั้งค่าความเร็วเลี้ยวเป็น %speed"
+    //% speed.min=0 speed.max=255 speed.defl=70
+    //% group="ตั้งค่า"
+    //% weight=90
+    export function setTurnSpeed(speed: number): void {
+        configuredTurnSpeed = clampSpeed(speed)
     }
 
     /**
@@ -484,22 +491,21 @@ namespace maqueenStep {
      * For 90 degrees it stops on the first detected black line.
      * For 180 degrees it stops on the second detected black line.
      */
-    //% blockId=maqueen_step_turn_angle
-    //% block="เลี้ยว %side %angle ความเร็ว %speed"
-    //% speed.min=0 speed.max=255 speed.defl=70
+    //% blockId=maqueen_step_turn_angle_v2
+    //% block="เลี้ยว %side %angle"
     //% group="เลี้ยว"
     //% weight=66
-    export function turn(side: MaqueenTurnSide, angle: MaqueenTurnAngle, speed: number): void {
+    export function turn(side: MaqueenTurnSide, angle: MaqueenTurnAngle): void {
         const targetHits = angle == MaqueenTurnAngle.Degree180 ? 2 : 1
         let hits = 0
         let wasOnLine = false
         const startedAt = input.runningTime()
 
-        pivotTurn(side, speed)
+        pivotTurn(side, configuredTurnSpeed)
         basic.pause(turnSearchDelayMs)
 
         while (hits < targetHits && input.runningTime() - startedAt < turnSearchTimeoutMs) {
-            pivotTurn(side, speed)
+            pivotTurn(side, configuredTurnSpeed)
 
             if (turnTargetSensorSeesBlack(side)) {
                 if (!wasOnLine) {
@@ -515,6 +521,15 @@ namespace maqueenStep {
 
         motorStop(MaqueenMotor.Both)
         basic.pause(100)
+    }
+
+    /**
+     * Hidden compatibility block for the old turn block with speed input.
+     */
+    //% blockId=maqueen_step_turn_angle blockHidden=true
+    export function turnWithSpeed(side: MaqueenTurnSide, angle: MaqueenTurnAngle, speed: number): void {
+        setTurnSpeed(speed)
+        turn(side, angle)
     }
 
     /**
