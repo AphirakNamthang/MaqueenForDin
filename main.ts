@@ -315,13 +315,7 @@ namespace maqueenStep {
      * Spin Maqueen left or right for a number of milliseconds without using line sensors.
      * A spin runs the left and right motors in opposite directions.
      */
-    //% blockId=maqueen_step_spin_seconds
-    //% block="หมุน %side เป็นเวลา %seconds วินาที ความเร็ว %speed"
-    //% seconds.min=1 seconds.max=10 seconds.defl=1
-    //% speed.min=0 speed.max=255 speed.defl=70
-    //% inlineInputMode=inline
-    //% group="มอเตอร์"
-    //% weight=78
+    //% blockId=maqueen_step_spin_seconds blockHidden=true
     export function spinSeconds(side: MaqueenTurnSide, seconds: number, speed: number): void {
         rotate(side, speed)
         basic.pause(Math.max(1, seconds) * 1000)
@@ -341,11 +335,19 @@ namespace maqueenStep {
      * Spin Maqueen left or right for an estimated 90 or 180 degree turn by time only.
      * A spin runs the left and right motors in opposite directions.
      */
-    //% blockId=maqueen_step_spin_angle_v2
+    //% blockId=maqueen_step_spin_angle_v2 blockHidden=true
+    export function spin(side: MaqueenTurnSide, angle: MaqueenTurnAngle): void {
+        spinDirection(side, angle)
+    }
+
+    /**
+     * Spin Maqueen left or right using configured spin speed and 90 degree time.
+     */
+    //% blockId=maqueen_step_spin_direction_angle
     //% block="หมุน %side %angle"
     //% group="มอเตอร์"
-    //% weight=77
-    export function spin(side: MaqueenTurnSide, angle: MaqueenTurnAngle): void {
+    //% weight=78
+    export function spinDirection(side: MaqueenTurnSide, angle: MaqueenTurnAngle): void {
         const duration = angle == MaqueenTurnAngle.Degree180 ? spin90Ms * 2 : spin90Ms
         spinSeconds(side, duration / 1000, configuredSpinSpeed)
     }
