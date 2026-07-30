@@ -63,6 +63,8 @@ namespace maqueenStep {
     let turnSearchTimeoutMs = 3000
     let checkpointDebounceMs = 500
     let configuredTurnSpeed = 70
+    let configuredSpinSpeed = 70
+    let spin90Ms = 1000
     let searchSide = MaqueenTurnSide.Left
     let searchSpeed = 35
 
@@ -162,6 +164,30 @@ namespace maqueenStep {
     //% weight=90
     export function setTurnSpeed(speed: number): void {
         configuredTurnSpeed = clampSpeed(speed)
+    }
+
+    /**
+     * Set spin speed used by the simple spin block.
+     */
+    //% blockId=maqueen_step_set_spin_speed
+    //% block="ตั้งค่าความเร็วหมุนเป็น %speed"
+    //% speed.min=0 speed.max=255 speed.defl=70
+    //% group="ตั้งค่า"
+    //% weight=89
+    export function setSpinSpeed(speed: number): void {
+        configuredSpinSpeed = clampSpeed(speed)
+    }
+
+    /**
+     * Set how long Maqueen should spin for an estimated 90 degree turn.
+     */
+    //% blockId=maqueen_step_set_spin_90_seconds
+    //% block="ตั้งเวลา 90 องศาตอนหมุนเป็น %seconds วินาที"
+    //% seconds.min=1 seconds.max=10 seconds.defl=1
+    //% group="ตั้งค่า"
+    //% weight=88
+    export function setSpin90Seconds(seconds: number): void {
+        spin90Ms = Math.max(1, seconds) * 1000
     }
 
     /**
@@ -315,13 +341,19 @@ namespace maqueenStep {
      * Spin Maqueen left or right for an estimated 90 or 180 degree turn by time only.
      * A spin runs the left and right motors in opposite directions.
      */
-    //% blockId=maqueen_step_spin_angle_time
-    //% block="หมุน %side %angle ความเร็ว %speed เวลา 90 องศา %turn90Milliseconds ms"
-    //% speed.min=0 speed.max=255 speed.defl=70
-    //% turn90Milliseconds.min=100 turn90Milliseconds.max=2000 turn90Milliseconds.defl=420
-    //% inlineInputMode=inline
+    //% blockId=maqueen_step_spin_angle_v2
+    //% block="หมุน %side %angle"
     //% group="มอเตอร์"
     //% weight=77
+    export function spin(side: MaqueenTurnSide, angle: MaqueenTurnAngle): void {
+        const duration = angle == MaqueenTurnAngle.Degree180 ? spin90Ms * 2 : spin90Ms
+        spinSeconds(side, duration / 1000, configuredSpinSpeed)
+    }
+
+    /**
+     * Hidden compatibility block for the old timed spin angle block.
+     */
+    //% blockId=maqueen_step_spin_angle_time blockHidden=true
     export function spinAngleByTime(side: MaqueenTurnSide, angle: MaqueenTurnAngle, speed: number, turn90Milliseconds: number): void {
         const duration = angle == MaqueenTurnAngle.Degree180 ? turn90Milliseconds * 2 : turn90Milliseconds
         spinSeconds(side, duration / 1000, speed)
