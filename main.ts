@@ -57,11 +57,14 @@ namespace maqueenStep {
     const I2C_ADDR = 0x10
     const LEFT_SENSOR = DigitalPin.P13
     const RIGHT_SENSOR = DigitalPin.P14
+    const ULTRASONIC_TRIG = DigitalPin.P1
+    const ULTRASONIC_ECHO = DigitalPin.P2
 
     const BLACK_VALUE = 1
     let turnSearchDelayMs = 200
     let turnSearchTimeoutMs = 3000
     let checkpointDebounceMs = 500
+    let obstacleDistanceCm = 10
     let configuredTurnSpeed = 70
     let configuredSpinSpeed = 70
     let spin90Ms = 1000
@@ -191,6 +194,18 @@ namespace maqueenStep {
     }
 
     /**
+     * Set obstacle distance threshold for ultrasonic blocks.
+     */
+    //% blockId=maqueen_step_set_obstacle_distance
+    //% block="ตั้งค่าระยะชนวัตถุเป็น %centimeters เซนติเมตร"
+    //% centimeters.min=1 centimeters.max=200 centimeters.defl=10
+    //% group="ตั้งค่า"
+    //% weight=87
+    export function setObstacleDistance(centimeters: number): void {
+        obstacleDistanceCm = Math.max(1, Math.floor(centimeters))
+    }
+
+    /**
      * Read one Maqueen line sensor.
      */
     //% blockId=maqueen_step_read_line_sensor
@@ -259,6 +274,40 @@ namespace maqueenStep {
     //% weight=77
     export function lineSensorAnalog(sensor: MaqueenLineSensor): number {
         return analogSensorValue(sensor)
+    }
+
+    /**
+     * Read ultrasonic distance in centimeters.
+     */
+    //% blockId=maqueen_step_ultrasonic_cm
+    //% block="ระยะ Ultrasonic (เซนติเมตร)"
+    //% group="เซนเซอร์"
+    //% weight=76
+    export function ultrasonicDistanceCm(): number {
+        pins.setPull(ULTRASONIC_TRIG, PinPullMode.PullNone)
+        pins.digitalWritePin(ULTRASONIC_TRIG, 0)
+        control.waitMicros(2)
+        pins.digitalWritePin(ULTRASONIC_TRIG, 1)
+        control.waitMicros(10)
+        pins.digitalWritePin(ULTRASONIC_TRIG, 0)
+
+        const duration = pins.pulseIn(ULTRASONIC_ECHO, PulseValue.High, 25000)
+        if (duration <= 0) {
+            return 999
+        }
+
+        return Math.idiv(duration, 58)
+    }
+
+    /**
+     * Check whether ultrasonic distance is within the configured obstacle threshold.
+     */
+    //% blockId=maqueen_step_obstacle_detected
+    //% block="เจอวัตถุข้างหน้า"
+    //% group="เซนเซอร์"
+    //% weight=75
+    export function obstacleDetected(): boolean {
+        return ultrasonicDistanceCm() <= obstacleDistanceCm
     }
 
     /**
@@ -564,6 +613,80 @@ namespace maqueenStep {
     export function turnWithSpeed(side: MaqueenTurnSide, angle: MaqueenTurnAngle, speed: number): void {
         setTurnSpeed(speed)
         turn(side, angle)
+    }
+
+    /**
+     * Drive forward until Maqueen detects an obstacle, turn left or right, and repeat.
+     * After the requested number of obstacle turns, stop both motors.
+     */
+    //% blockId=maqueen_step_obstacle_turn_count
+    //% block="ชนวัตถุเลี้ยว %side %times ครั้ง ความเร็วเดินหน้า %driveSpeed"
+    //% times.min=1 times.max=20 times.defl=1
+    //% driveSpeed.min=0 driveSpeed.max=255 driveSpeed.defl=80
+    //% group="มอเตอร์"
+    //% weight=75
+    export function obstacleTurnCount(side: MaqueenTurnSide, times: number, driveSpeed: number): void {
+        let count = 0
+        let wasNearObstacle = false
+        const target = Math.max(0, Math.floor(times))
+
+        while (count < target) {
+            motorRun(MaqueenMotor.Both, MaqueenDirection.Forward, driveSpeed)
+
+            if (obstacleDetected()) {
+                if (!wasNearObstacle) {
+                    count += 1
+                    wasNearObstacle = true
+                    motorStop(MaqueenMotor.Both)
+                    basic.pause(200)
+                    turn(side, MaqueenTurnAngle.Degree90)
+                    basic.pause(300)
+                }
+            } else {
+                wasNearObstacle = false
+            }
+
+            basic.pause(50)
+        }
+
+        motorStop(MaqueenMotor.Both)
+    }
+
+    /**
+     * Drive forward until Maqueen detects an obstacle, spin left or right, and repeat.
+     * After the requested number of obstacle spins, stop both motors.
+     */
+    //% blockId=maqueen_step_obstacle_spin_count
+    //% block="ชนวัตถุหมุน %side %times ครั้ง ความเร็วเดินหน้า %driveSpeed"
+    //% times.min=1 times.max=20 times.defl=1
+    //% driveSpeed.min=0 driveSpeed.max=255 driveSpeed.defl=80
+    //% group="มอเตอร์"
+    //% weight=74
+    export function obstacleSpinCount(side: MaqueenTurnSide, times: number, driveSpeed: number): void {
+        let count = 0
+        let wasNearObstacle = false
+        const target = Math.max(0, Math.floor(times))
+
+        while (count < target) {
+            motorRun(MaqueenMotor.Both, MaqueenDirection.Forward, driveSpeed)
+
+            if (obstacleDetected()) {
+                if (!wasNearObstacle) {
+                    count += 1
+                    wasNearObstacle = true
+                    motorStop(MaqueenMotor.Both)
+                    basic.pause(200)
+                    spinDirection(side, MaqueenTurnAngle.Degree90)
+                    basic.pause(300)
+                }
+            } else {
+                wasNearObstacle = false
+            }
+
+            basic.pause(50)
+        }
+
+        motorStop(MaqueenMotor.Both)
     }
 
     /**
