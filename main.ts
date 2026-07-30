@@ -61,6 +61,7 @@ namespace maqueenStep {
     let blackValue = 0
     let turnSearchDelayMs = 200
     let turnSearchTimeoutMs = 3000
+    let checkpointDebounceMs = 500
     let searchSide = MaqueenTurnSide.Left
     let searchSpeed = 35
 
@@ -82,6 +83,10 @@ namespace maqueenStep {
 
     function checkpointDetected(): boolean {
         return isBlackPin(LEFT_SENSOR) && isBlackPin(RIGHT_SENSOR)
+    }
+
+    function checkpointDebounceReady(lastDetectedAt: number): boolean {
+        return input.runningTime() - lastDetectedAt >= checkpointDebounceMs
     }
 
     function sensorPin(sensor: MaqueenLineSensor): AnalogPin {
@@ -462,6 +467,18 @@ namespace maqueenStep {
     }
 
     /**
+     * Set checkpoint debounce time in milliseconds.
+     */
+    //% blockId=maqueen_step_set_checkpoint_debounce
+    //% block="ตั้งเวลา debounce จุดตัดเป็น %milliseconds ms"
+    //% milliseconds.min=100 milliseconds.max=3000 milliseconds.defl=500
+    //% group="ตั้งค่า"
+    //% weight=66
+    export function setCheckpointDebounce(milliseconds: number): void {
+        checkpointDebounceMs = Math.max(0, Math.floor(milliseconds))
+    }
+
+    /**
      * Turn Maqueen left or right until the line sensor finds the next black line.
      * A turn stops one motor and runs the other motor.
      * For 90 degrees it stops on the first detected black line.
@@ -541,16 +558,18 @@ namespace maqueenStep {
     export function followLineForwardSteps(steps: number, speed: number, turnSpeed: number): void {
         let count = 0
         let wasOnCheckpoint = false
+        let lastCheckpointAt = -checkpointDebounceMs
         const target = Math.max(0, Math.floor(steps))
 
         while (count < target) {
             followBlackLineOnce(speed, turnSpeed)
 
             if (checkpointDetected()) {
-                if (!wasOnCheckpoint) {
+                if (!wasOnCheckpoint && checkpointDebounceReady(lastCheckpointAt)) {
                     count += 1
+                    lastCheckpointAt = input.runningTime()
                     wasOnCheckpoint = true
-                    basic.pause(180)
+                    basic.pause(80)
                 }
             } else {
                 wasOnCheckpoint = false
