@@ -65,12 +65,15 @@ namespace maqueenStep {
     let searchSpeed = 35
 
     function clampSpeed(speed: number): number {
-        return Math.max(0, Math.min(255, speed))
+        return Math.max(0, Math.min(255, Math.floor(speed)))
     }
 
     function writeMotor(motor: MaqueenMotor, direction: MaqueenDirection, speed: number): void {
-        const command = (motor << 12) | (direction << 8) | clampSpeed(speed)
-        pins.i2cWriteNumber(I2C_ADDR, command, NumberFormat.UInt16BE)
+        const buf = pins.createBuffer(3)
+        buf[0] = motor
+        buf[1] = direction
+        buf[2] = clampSpeed(speed)
+        pins.i2cWriteBuffer(I2C_ADDR, buf)
     }
 
     function isBlackPin(pin: DigitalPin): boolean {
