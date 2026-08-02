@@ -60,7 +60,7 @@ namespace maqueenStep {
     const ULTRASONIC_TRIG = DigitalPin.P1
     const ULTRASONIC_ECHO = DigitalPin.P2
 
-    const BLACK_VALUE = 1
+    const BLACK_VALUE = 0
     let turnSearchDelayMs = 200
     let turnSearchTimeoutMs = 3000
     let checkpointDebounceMs = 500
