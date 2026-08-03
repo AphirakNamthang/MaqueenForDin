@@ -9,6 +9,13 @@ enum MaqueenMotor {
     Both = 3
 }
 
+enum MaqueenMotorSide {
+    //% block="ซ้าย"
+    Left = 0,
+    //% block="ขวา"
+    Right = 2
+}
+
 enum MaqueenDirection {
     //% block="เดินหน้า"
     Forward = 0,
@@ -68,11 +75,28 @@ namespace maqueenStep {
     let configuredTurnSpeed = 70
     let configuredSpinSpeed = 70
     let spin90Ms = 1000
+    let leftMotorBoostPercent = 0
+    let rightMotorBoostPercent = 0
     let searchSide = MaqueenTurnSide.Left
     let searchSpeed = 35
 
     function clampSpeed(speed: number): number {
         return Math.max(0, Math.min(255, Math.floor(speed)))
+    }
+
+    function motorBoostPercent(motor: MaqueenMotor): number {
+        if (motor == MaqueenMotor.Left) {
+            return leftMotorBoostPercent
+        } else if (motor == MaqueenMotor.Right) {
+            return rightMotorBoostPercent
+        }
+
+        return 0
+    }
+
+    function tunedSpeed(motor: MaqueenMotor, speed: number): number {
+        const boost = motorBoostPercent(motor)
+        return clampSpeed(speed * (100 + boost) / 100)
     }
 
     function writeMotor(motor: MaqueenMotor, direction: MaqueenDirection, speed: number): void {
@@ -191,6 +215,24 @@ namespace maqueenStep {
     //% weight=88
     export function setSpin90Seconds(seconds: number): void {
         spin90Ms = Math.max(1, seconds) * 1000
+    }
+
+    /**
+     * Increase one motor speed by a percentage to compensate for uneven motors.
+     */
+    //% blockId=maqueen_step_set_motor_boost
+    //% block="มอเตอร์ %motor วิ่งเร็วขึ้น %percent เปอร์เซ็นต์"
+    //% percent.min=0 percent.max=100 percent.defl=0
+    //% group="ตั้งค่า"
+    //% weight=86
+    export function setMotorBoost(motor: MaqueenMotorSide, percent: number): void {
+        const boost = Math.max(0, Math.min(100, Math.floor(percent)))
+
+        if (motor == MaqueenMotorSide.Left) {
+            leftMotorBoostPercent = boost
+        } else if (motor == MaqueenMotorSide.Right) {
+            rightMotorBoostPercent = boost
+        }
     }
 
     /**
@@ -320,10 +362,10 @@ namespace maqueenStep {
     //% weight=75
     export function motorRun(motor: MaqueenMotor, direction: MaqueenDirection, speed: number): void {
         if (motor == MaqueenMotor.Both) {
-            writeMotor(MaqueenMotor.Left, direction, speed)
-            writeMotor(MaqueenMotor.Right, direction, speed)
+            writeMotor(MaqueenMotor.Left, direction, tunedSpeed(MaqueenMotor.Left, speed))
+            writeMotor(MaqueenMotor.Right, direction, tunedSpeed(MaqueenMotor.Right, speed))
         } else {
-            writeMotor(motor, direction, speed)
+            writeMotor(motor, direction, tunedSpeed(motor, speed))
         }
     }
 
